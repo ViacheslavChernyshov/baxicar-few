@@ -1,0 +1,17 @@
+<nav class="navbar bg-dark">
+  <h2>Baxicar</h2>
+  <ul>
+    <li routerLinkActive="active">
+      <a [routerLink]="['/driver']">Driver</a>
+    </li>
+    <li routerLinkActive="active">
+      <a [routerLink]="['/passenger']">Passenger</a>
+    </li>
+    <li routerLinkActive="active">
+      <a [routerLink]="['/settings']">Settings</a>
+    </li>
+  </ul>
+</nav>
+
+
+<router-outlet></router-outlet>
