@@ -45,6 +45,5 @@ export class LoginPageComponent implements OnInit {
         this.submitted = false;
       }
     );
-
   }
 }

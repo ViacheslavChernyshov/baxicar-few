@@ -5,10 +5,9 @@ import {environment} from 'src/environments/environment';
 
 const httpOptions = {
   headers: new HttpHeaders({
-    'Access-Control-Allow-Origin': '*'
-    /*,
-    'Authorization':'authkey',
-    'userid':'1'*/
+
+    'Access-Control-Allow-Origin': '*',
+    // 'Access-Control-Allow-Headers': '*'
   })
 };
 

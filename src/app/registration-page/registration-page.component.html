@@ -1,1 +1,80 @@
-<p>registration-page works!</p>
+<form [formGroup]="form" (ngSubmit)="submit()">
+
+  <h2 class="text-center">Sign up user</h2>
+
+  <div class="form-control">
+    <label for="email">Email</label>
+    <input id="email" type="email" formControlName="email">
+    <div *ngIf="form.get('email').touched && form.get('email').invalid" class="validation">
+      <small *ngIf="form.get('email').errors.required">Enter your email</small>
+    </div>
+  </div>
+  <div class="form-control">
+    <label for="password">Password</label>
+    <input id="password" type="password" formControlName="password">
+    <div *ngIf="form.get('password').touched && form.get('password').invalid" class="validation">
+      <small *ngIf="form.get('password').errors.required">Enter password</small>
+    </div>
+  </div>
+  <div class="form-control">
+    <label for="confirmPassword">Confirm password:</label>
+    <input id="confirmPassword" type="password" formControlName="confirmPassword">
+    <div *ngIf="form.get('confirmPassword').touched && form.get('confirmPassword').invalid" class="validation">
+      <small *ngIf="form.get('password').errors.required">Enter confirm password</small>
+    </div>
+  </div>
+  <div class="form-control">
+    <label for="firstname">Firstname:</label>
+    <input id="firstname" type="firstname" formControlName="firstname">
+    <div *ngIf="form.get('firstname').touched && form.get('firstname').invalid" class="validation">
+      <small *ngIf="form.get('firstname').errors.required">Enter firstname</small>
+    </div>
+  </div>
+  <div class="form-control">
+    <label for="lastname">Lastname</label>
+    <input id="lastname" type="lastname" formControlName="lastname">
+    <div *ngIf="form.get('lastname').touched && form.get('lastname').invalid" class="validation">
+      <small *ngIf="form.get('lastname').errors.required">Enter lastname</small>
+    </div>
+  </div>
+  <div class="form-control">
+    <label for="dateOfBirth">Date of birth</label>
+    <input id="dateOfBirth" type="text" bsDatepicker formControlName="dateOfBirth"
+           [bsConfig]="{dateInputFormat:'DD.MM.YYYY'}">
+    <div *ngIf="form.get('dateOfBirth').touched && form.get('dateOfBirth').invalid" class="validation">
+      <small *ngIf="form.get('dateOfBirth').errors.required">Enter date of birth</small>
+    </div>
+  </div>
+  <div class="form-control">
+    <label for="phone">Phone</label>
+    <input id="phone" type="phone" formControlName="phone">
+    <div *ngIf="form.get('phone').touched && form.get('phone').invalid" class="validation">
+      <small *ngIf="form.get('phone').errors.required">Enter phone</small>
+    </div>
+  </div>
+  <div class="form-control">
+    <label for="gender">Gender</label>
+    <select formControlName="gender">
+      <option value="M">Male</option>
+      <option value="F">Female</option>
+      <option value="X">Others</option>
+    </select>
+    <div *ngIf="form.get('gender').touched && form.get('gender').invalid" class="validation">
+      <small *ngIf="form.get('gender').errors.required">Choose your gender</small>
+    </div>
+  </div>
+  <div class="form-control">
+    <label for="agree">Agree</label>
+    <input id="agree" type="checkbox" formControlName="agree" class="form-check-input">
+    <label class="form-check-label" >DHCP</label>
+    <div *ngIf="form.get('agree').touched && form.get('agree').invalid" class="validation">
+      <small *ngIf="form.get('agree').errors.required">Enter phone</small>
+    </div>
+  </div>
+
+
+  <button type="submit" class="btn btn-primary btn-block" [disabled]="form.invalid || submitted">Sign up</button>
+  <!--  <button type="submit" class="btn btn-primary btn-block" [disabled]="form.invalid || submitted">Sign up</button>-->
+
+
+</form>

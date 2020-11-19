@@ -1,6 +1,6 @@
 <nav class="navbar bg-dark">
   <h2>Baxicar</h2>
-  <ul>
+  <ul *ngIf="auth.isAuthenticated(); else login">
     <li routerLinkActive="active">
       <a [routerLink]="['/driver']">Driver</a>
     </li>
@@ -10,7 +10,35 @@
     <li routerLinkActive="active">
       <a [routerLink]="['/settings']">Settings</a>
     </li>
+<!--    <li routerLinkActive="active">-->
+<!--      <a [routerLink]="['/login']">Login</a>-->
+<!--    </li>-->
+    <li routerLinkActive="active">
+      <a href="#" (click)="logout($event)">Logout</a>
+    </li>
+<!--    <li routerLinkActive="active">-->
+<!--      <a [routerLink]="['/signup']">Sign up</a>-->
+<!--    </li>-->
+
   </ul>
+
+
+
+
+  <ng-template #login>
+    <ul>
+      <li routerLinkActive="active">
+        <a [routerLink]="['/login']">Login</a>
+      </li>
+      <li routerLinkActive="active">
+        <a [routerLink]="['/signup']">Sign up</a>
+      </li>
+    </ul>
+  </ng-template>
+
+
+
+
 </nav>
 
 
