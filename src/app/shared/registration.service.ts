@@ -21,7 +21,6 @@ export class RegistrationService {
   }
 
   create(user) {
-
     return this.http.post('http://localhost:8080/api/v1/user/signup', user, httpOptions)
       .pipe(map((res: User) => {
         return {
@@ -31,6 +30,5 @@ export class RegistrationService {
         };
       }));
   }
-
 
 }

@@ -1,1 +1,16 @@
 <p>driver-page works!</p>
+<input type="text" [(ngModel)]=startAddressInput #startAddress (input)="onKeyUpStartAddress(startAddress.value)">
+
+<input type="text" [(ngModel)]=endAddressInput #endAddress (input)="onKeyUpEndAddress(endAddress.value)">
+
+<button (click)="onSave($event)">Save</button>
+<button (click)="onRouteReset($event)">Reset</button>
+<div #googleMap style="width:100%;height:800px"></div>
+
+
+<!--<div *ngIf="routes$ | async as routes">-->
+<!--  <div *ngFor="let route of routes">-->
+<!--    {{route.id, route.routeId}}-->
+<!--  </div>-->
+<!--</div>-->
+<!--<mat-slider min="1" max="100" step="1" value="1"></mat-slider>-->
