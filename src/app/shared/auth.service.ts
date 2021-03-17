@@ -30,6 +30,7 @@ export class AuthService {
       const expData = new Date(new Date().getTime() + response.expiresIn * 1000);
       localStorage.setItem('fb-token-exp', expData.toString());
       localStorage.setItem('fb-token', response.token);
+      localStorage.setItem('user-id', response.userId);
     } else {
       localStorage.clear();
     }

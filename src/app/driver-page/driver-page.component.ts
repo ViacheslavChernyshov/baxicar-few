@@ -5,6 +5,8 @@ import {FormControl} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {Router} from '@angular/router';
 import {RouteService} from '../shared/route.service';
+import {Route} from '../shared/interfaces';
+import {delay} from 'rxjs/operators';
 
 @Component({
   selector: 'app-driver-page',
@@ -14,6 +16,8 @@ import {RouteService} from '../shared/route.service';
 export class DriverPageComponent implements AfterContentInit {
 
   @ViewChild('googleMap', {static: true}) public gMapElement: ElementRef;
+
+  // @ViewChild('googleMapPanel', {static: false}) public gMapPanelElement: ElementRef;
 
   @ViewChild('startAddress', {static: true}) startAddress: ElementRef;
 
@@ -41,19 +45,24 @@ export class DriverPageComponent implements AfterContentInit {
   startAddressInput: string;
   endAddressInput: string;
 
-  // directionsDisplay: google.maps.DirectionsRenderer;
   waypoints: [];
-  // directionsService: google.maps.DirectionsService;
 
-
-  directionsDisplay: google.maps.DirectionsRenderer;
+  directionsRenderer: google.maps.DirectionsRenderer;
   directionsService = new google.maps.DirectionsService();
 
-  // countMarkers = 0;
+
   markers = [];
   routes$;
+  routes: Route[];
+
+  dataSource: Route[];
 
   submitted = false;
+
+  displayedColumns: string[] = ['routeId', 'startAddress', 'endAddress'];
+
+  selectedRowIndex: number = -1;
+
 
   constructor(
     private httpClient: HttpClient,
@@ -69,9 +78,8 @@ export class DriverPageComponent implements AfterContentInit {
     this.initMarkers();
     this.initPlaces();
     // this.initDirections();
-
-
     // this.initDriverRoutes();
+
 
   }
 
@@ -83,7 +91,9 @@ export class DriverPageComponent implements AfterContentInit {
     };
 
     this.map = new google.maps.Map(this.gMapElement.nativeElement, mapOptions);
-    this.directionsDisplay = new google.maps.DirectionsRenderer({map: this.map, draggable: true});
+    this.directionsRenderer = new google.maps.DirectionsRenderer({map: this.map, draggable: true});
+
+    this.getRoutesByDriverId(window.localStorage.getItem('user-id'));
   }
 
   private addStartRouteMarkerListeners() {
@@ -364,58 +374,57 @@ export class DriverPageComponent implements AfterContentInit {
     google.maps.event.addListener(this.map, 'directions_changed', (event) => {
       console.log(event);
       console.log('directionsDisplayzzzzz');
-      // alert(directionsDisplay.directions.routes[0].legs[0].end_location.lat());
-      // alert(startRouteMarker.getPosition().lat());
-      // computeTotalDistance(directionsDisplay.getDirections());
-      // this.computeTotalDistance(this.directionsDisplay.getDirections());
-
-      // this.calcRoute();
     });
 
   }
 
+  calculateAndDisplayRoute() {
+    const directionsService = new google.maps.DirectionsService();
+    directionsService.route(
+      {
+        origin: this.startRouteMarker.getPosition(),
+        destination: this.endRouteMarker.getPosition(),
+        travelMode: google.maps.TravelMode.DRIVING,
+      },
+      (response, status) => {
+        if (status === 'OK') {
+          this.directionsRenderer.setDirections(response);
+        } else {
+          window.alert('Directions request failed due to ' + status);
+        }
+      }
+    );
+  }
+
   routeTrip() {
-    if (this.directionsDisplay != null) {
-      this.directionsDisplay.setMap(null);
+    if (this.directionsRenderer != null) {
+      this.directionsRenderer.setMap(null);
     }
 
     const rendererOptions = {map: this.map, draggable: true};
-    this.directionsDisplay = new google.maps.DirectionsRenderer(rendererOptions);
+    this.directionsRenderer = new google.maps.DirectionsRenderer(rendererOptions);
 
-    this.directionsDisplay.addListener('directions_changed', () => {
-      // alert(directionsDisplay.directions.routes[0].legs[0].end_location.lat());
-      // alert(startRouteMarker.getPosition().lat());
-      // computeTotalDistance(directionsDisplay.getDirections());
-      this.computeTotalDistance(this.directionsDisplay.getDirections());
+    // this.directionsDisplay.setMap(this.map);
+    // this.directionsDisplay.setPanel(this.gMapPanelElement.nativeElement);
+    // this.calculateAndDisplayRoute();
+
+
+    this.directionsRenderer.addListener('directions_changed', () => {
+
+      this.computeTotalDistance(this.directionsRenderer.getDirections());
       console.log('dddddddddddddddddddddd');
-      console.log('ggggggggggggggggggg' + this.directionsDisplay.getDirections().routes[0].legs[0].start_location);
-      this.startRouteMarker.setPosition(this.directionsDisplay.getDirections().routes[0].legs[0].start_location);
-      this.endRouteMarker.setPosition(this.directionsDisplay.getDirections().routes[0].legs[0].end_location);
+      console.log('ggggggggggggggggggg' + this.directionsRenderer.getDirections().routes[0].legs[0].start_location);
+      this.startRouteMarker.setPosition(this.directionsRenderer.getDirections().routes[0].legs[0].start_location);
+      this.endRouteMarker.setPosition(this.directionsRenderer.getDirections().routes[0].legs[0].end_location);
       this.refreshStartAddressInput();
       this.refreshEndAddressInput();
-      console.log('directionsDisplay1');
-      console.log('directionsDisplay2');
+      // console.log('directionsDisplay1' + this.directionsRenderer.getDirections().routes[0].legs[0].start_address);
+      // console.log('directionsDisplay2' + this.directionsRenderer.getDirections().routes[0].legs[0].distance.text);
+      // console.log('directionsDisplay2' + this.directionsRenderer.getDirections().routes[0].legs[0].duration.text);
+      // console.log('directionsDisplay2' + this.directionsRenderer.getDirections().routes[0].legs[0].duration_in_traffic.text);
     });
     this.calcRoute();
 
-    // const request = {
-    //   origin: this.startRouteMarker.getPosition(),
-    //   destination: this.endRouteMarker.getPosition(),
-    //   waypoints: this.waypoints,
-    //   provideRouteAlternatives: true,
-    //   travelMode: google.maps.TravelMode.DRIVING
-    // };
-    //
-    // this.directionsService = new google.maps.DirectionsService();
-    // this.directionsService.route(request, (response, status) => {
-    //   if (status === google.maps.DirectionsStatus.OK) {
-    //     console.log(response);
-    //     console.log(response.routes[0].legs[0].start_address);
-    //     this.directionsDisplay.setDirections(response);
-    //   } else {
-    //     alert('failed to get directions');
-    //   }
-    // });
     this.startRouteMarker.setVisible(false);
     this.endRouteMarker.setVisible(false);
   }
@@ -430,7 +439,7 @@ export class DriverPageComponent implements AfterContentInit {
     };
     this.directionsService.route(request, (response, status) => {
       if (status === google.maps.DirectionsStatus.OK) {
-        this.directionsDisplay.setDirections(response);
+        this.directionsRenderer.setDirections(response);
       }
     });
   }
@@ -466,10 +475,11 @@ export class DriverPageComponent implements AfterContentInit {
   //   });
   // }
 
+
   onSave($event) {
     this.submitted = true;
     console.log('Save button is clicked!', $event);
-    const leg = this.directionsDisplay.getDirections().routes[0].legs[0];
+    const leg = this.directionsRenderer.getDirections().routes[0].legs[0];
     const wp = leg.via_waypoints;
     const w = [];
     for (let i = 0; i < wp.length; i++) {
@@ -484,29 +494,42 @@ export class DriverPageComponent implements AfterContentInit {
     //   waypoints: w
     // };
 
+    console.log('ssss:', window.localStorage.getItem('user-id'));
+
     const route = {
+      userId: window.localStorage.getItem('user-id'),
+      startAddress: leg.start_address,
+      endAddress: leg.end_address,
       originLatitude: leg.start_location.lat(),
       originLongitude: leg.start_location.lng(),
       destinationLatitude: leg.end_location.lat(),
       destinationLongitude: leg.end_location.lng(),
-      waypoint: w
+      waypoints: w
     };
 
     console.log('Save button is clicked!', $event);
     console.log('request:', route);
 
-    this.routeService.create(route).subscribe(res => {
-        console.log(route);
-        console.log(res);
+    // this.routeService.create(route).subscribe(res => {
+    //     console.log('statusCode' + res.statusCode);
+    //     console.log(route);
+    //     console.log(res);
+    //
+    //     this.getRoutesByDriverId(window.localStorage.getItem('user-id'));
+    //     this.router.navigate(['/', 'driver']);
+    //     this.submitted = false;
+    //   },
+    //   () => {
+    //     this.submitted = false;
+    //   }
+    // );
 
-        this.router.navigate(['/', 'driver']);
-        this.submitted = false;
-
-
+    this.routeService.create(route).subscribe(
+      data => {
+        console.log('success', data);
+        this.getRoutesByDriverId(window.localStorage.getItem('user-id'));
       },
-      () => {
-        this.submitted = false;
-      }
+      error => console.log('Oops', error)
     );
 
 
@@ -525,8 +548,8 @@ export class DriverPageComponent implements AfterContentInit {
     this.startRouteMarker = new google.maps.Marker({map: this.map, draggable: true});
     this.endRouteMarker = new google.maps.Marker({map: this.map, draggable: true});
 
-    this.directionsDisplay.setMap(null);
-    this.directionsDisplay.setMap(null);
+    this.directionsRenderer.setMap(null);
+    this.directionsRenderer.setMap(null);
 
     this.isInitStartRouteMarker = false;
     this.isInitEndRouteMarker = false;
@@ -535,9 +558,26 @@ export class DriverPageComponent implements AfterContentInit {
     this.getRoutesByDriverId(id);
   }
 
-  getRoutesByDriverId(driverId) {
+  getRoutesByDriverId(id) {
 
-    this.routes$ = this.routeService.getRoutesByDriverId(driverId);
+
+    // console.log('request routeses:', this.routeService.getRoutesByDriverId(id));
+
+    this.routeService.getRoutesByDriverId(id).subscribe((response: Route[]) => {
+      this.routes = response;
+      this.routes$ = response;
+      this.dataSource = response;
+      console.log('ziza:', this.routes);
+      console.log('request routes:', this.routes$);
+      // console.log('request routes:', this.routes$);
+    });
+
+    // .
+    //   subscribe((response: Route) => {
+    //     this.route = response;
+    //   });
+
+    // this.routes$ = this.routeService.getRoutesByDriverId(id);
 
     // const userId = window.sessionStorage.getItem('editUserId');
     // console.log('request userId:', userId);
@@ -551,5 +591,8 @@ export class DriverPageComponent implements AfterContentInit {
     this.getRoutesByDriverId(userId);
   }
 
-
+  highlight(row){
+    console.log(row);
+    this.selectedRowIndex = row.routeId;
+  }
 }

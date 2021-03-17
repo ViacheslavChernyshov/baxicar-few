@@ -5,12 +5,64 @@
 
 <button (click)="onSave($event)">Save</button>
 <button (click)="onRouteReset($event)">Reset</button>
-<div #googleMap style="width:100%;height:800px"></div>
+
+<!--<div id="right-panel" #googleMapPanel style="width:300px;height:300px"></div>-->
+<div id="map" #googleMap style="width:100%;height:800px"></div>
 
 
-<!--<div *ngIf="routes$ | async as routes">-->
-<!--  <div *ngFor="let route of routes">-->
-<!--    {{route.id, route.routeId}}-->
-<!--  </div>-->
-<!--</div>-->
-<!--<mat-slider min="1" max="100" step="1" value="1"></mat-slider>-->
+<div class="col-md-12">
+  <table class="table table-striped table-hover">
+    <thead>
+    <tr>
+      <th>Route ID</th>
+      <th>Start address</th>
+      <th>End address</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let route of routes">
+      <td>{{route.routeId}}</td>
+      <td>{{route.startAddress}}</td>
+      <td>{{route.endAddress}}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <!-- Position Column -->
+  <ng-container matColumnDef="routeId">
+    <mat-header-cell *matHeaderCellDef> No.</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.routeId}} </mat-cell>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="startAddress">
+    <mat-header-cell *matHeaderCellDef> Name</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.startAddress}} </mat-cell>
+  </ng-container>
+
+  <!-- Weight Column -->
+  <ng-container matColumnDef="endAddress">
+    <mat-header-cell *matHeaderCellDef> Weight</mat-header-cell>
+    <mat-cell *matCellDef="let element"> {{element.endAddress}} </mat-cell>
+  </ng-container>
+
+  <!--  &lt;!&ndash; Symbol Column &ndash;&gt;-->
+  <!--  <ng-container matColumnDef="symbol">-->
+  <!--    <mat-header-cell *matHeaderCellDef> Symbol</mat-header-cell>-->
+  <!--    <mat-cell *matCellDef="let element"> {{element.symbol}} </mat-cell>-->
+  <!--  </ng-container>-->
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight': selectedRowIndex == row.routeId}"
+           (click)="highlight(row)"></mat-row>
+
+  <!--  <md-row *cdkRowDef="let row; columns: displayedColumns;"-->
+  <!--          [ngClass]="{'highlight': selectedRowIndex == row.id}"-->
+  <!--          (click)="highlight(row)">-->
+  <!--  </md-row>-->
+
+</mat-table>
+

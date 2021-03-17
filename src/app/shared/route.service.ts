@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {map} from 'rxjs/operators';
+import {map, tap} from 'rxjs/operators';
 import {Route} from './interfaces';
 
 const httpOptions = {
@@ -18,30 +18,49 @@ const httpOptions = {
 })
 export class RouteService {
 
+  route: Route;
+
   constructor(private  http: HttpClient) {
   }
 
+
   create(route) {
-    return this.http.post('http://localhost:8080/api/v1/driver/addDriverRoute', route, httpOptions)
-      .pipe(map((res: Route) => {
-        return {
-          ...route,
-          id: res.id,
-          routeId: res.routeId,
-          date: new Date(route.date)
-        };
-      }));
+    // return this.http.post('http://localhost:8080/api/v1/driver/addDriverRoute', route, httpOptions);
+    return this.http.post('http://localhost:8080/api/v1/driver/addDriverRoute', route, { responseType: 'text' });
   }
 
-  getRoutesByDriverId(driverId) {
-    return this.http.get('http://localhost:8080/api/v1/driver/getRoutesByDriverId', driverId)
-      .pipe(map(res => {
-        return Object.keys(res).map(key => ({
-          ...res[key],
-          id: key,
-          date: new Date()
-        }));
-      }));
-  }
+  // create(route) {
+  //   return this.http.post('http://localhost:8080/api/v1/driver/addDriverRoute', route, httpOptions)
+  //     .pipe(map((res: Route) => {
+  //       return {
+  //         ...route,
+  //         id: res.id,
+  //         routeId: res.routeId,
+  //         date: new Date(route.date)
+  //       };
+  //     }));
+  // }
 
+  getRoutesByDriverId(id) {
+    return this.http.get(`http://localhost:8080/api/v1/driver/routes/${id}`);
+    // return this.http.get('http://localhost:8080/api/v1/driver/routes/' + id);
+    // return this.http.get('http://localhost:8080/api/v1/driver/routes/' + id)
+    //   .pipe(map(res => {
+    //     return Object.keys(res).map(key => ({
+    //       ...res[key],
+    //       id: key,
+    //       date: new Date()
+    //     }));
+    //   }));
+
+
+    // return this.http.get(`http://localhost:8080/api/v1/driver/routes/${id}`).pipe(map(res => {
+    //   return Object.keys(res).map(key => ({
+    //     ...res[key],
+    //     id: key,
+    //     routeId: res[key].routeId,
+    //     date: new Date()
+    //   }));
+    // }));
+  }
 }
