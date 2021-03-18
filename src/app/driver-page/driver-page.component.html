@@ -10,24 +10,24 @@
 <div id="map" #googleMap style="width:100%;height:800px"></div>
 
 
-<div class="col-md-12">
-  <table class="table table-striped table-hover">
-    <thead>
-    <tr>
-      <th>Route ID</th>
-      <th>Start address</th>
-      <th>End address</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let route of routes">
-      <td>{{route.routeId}}</td>
-      <td>{{route.startAddress}}</td>
-      <td>{{route.endAddress}}</td>
-    </tr>
-    </tbody>
-  </table>
-</div>
+<!--<div class="col-md-12">-->
+<!--  <table class="table table-striped table-hover">-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--      <th>Route ID</th>-->
+<!--      <th>Start address</th>-->
+<!--      <th>End address</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody>-->
+<!--    <tr *ngFor="let route of routes">-->
+<!--      <td>{{route.routeId}}</td>-->
+<!--      <td>{{route.startAddress}}</td>-->
+<!--      <td>{{route.endAddress}}</td>-->
+<!--    </tr>-->
+<!--    </tbody>-->
+<!--  </table>-->
+<!--</div>-->
 
 
 <mat-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -57,7 +57,7 @@
 
   <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
   <mat-row *matRowDef="let row; columns: displayedColumns;" [ngClass]="{'highlight': selectedRowIndex == row.routeId}"
-           (click)="highlight(row)"></mat-row>
+           (click)="highlight(row) " (mouseover)="highlightRow(row)"></mat-row>
 
   <!--  <md-row *cdkRowDef="let row; columns: displayedColumns;"-->
   <!--          [ngClass]="{'highlight': selectedRowIndex == row.id}"-->

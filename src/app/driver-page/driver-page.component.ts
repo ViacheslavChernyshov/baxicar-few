@@ -430,6 +430,12 @@ export class DriverPageComponent implements AfterContentInit {
   }
 
   calcRoute() {
+    console.log('---------------------');
+
+
+    console.log(this.endRouteMarker.getPosition().lat());
+    console.log(this.endRouteMarker.getPosition().lng());
+
     const request = {
       origin: this.startRouteMarker.getPosition(),
       destination: this.endRouteMarker.getPosition(),
@@ -591,8 +597,57 @@ export class DriverPageComponent implements AfterContentInit {
     this.getRoutesByDriverId(userId);
   }
 
-  highlight(row){
+  highlight(row) {
+    console.log(row);
+    this.selectedRowIndex = row.routeId;
+
+    this.clearMarkers();
+
+    if (this.directionsRenderer != null) {
+      this.directionsRenderer.setMap(null);
+    }
+
+    const rendererOptions = {map: this.map, draggable: true};
+    this.directionsRenderer = new google.maps.DirectionsRenderer(rendererOptions);
+
+    console.log(row.originLatitude);
+
+    this.startRouteMarker = new google.maps.Marker({map: this.map, draggable: true});
+    this.startRouteMarker.setPosition(new google.maps.LatLng(row.originLatitude, row.originLongitude));
+    this.startRouteMarker.setVisible(true);
+
+    this.endRouteMarker = new google.maps.Marker({map: this.map, draggable: true});
+    this.endRouteMarker.setPosition(new google.maps.LatLng(row.destinationLatitude, row.destinationLongitude));
+    this.endRouteMarker.setVisible(true);
+
+    this.refreshStartAddressInput();
+    this.refreshEndAddressInput();
+
+    this.calcRoute();
+
+    this.startRouteMarker.setVisible(false);
+    this.endRouteMarker.setVisible(false);
+    this.isInitStartRouteMarker = true;
+    this.isInitEndRouteMarker = true;
+  }
+
+  highlightRow(row) {
     console.log(row);
     this.selectedRowIndex = row.routeId;
   }
+
+  clearMarkers() {
+    this.startRouteMarker = null;
+    this.endRouteMarker = null;
+
+    this.isInitStartRouteMarker = false;
+    this.isInitEndRouteMarker = false;
+
+    this.startAddressInput = null;
+    this.endAddressInput = null;
+
+    this.waypoints = [];
+    this.markers = [];
+  }
+
 }
