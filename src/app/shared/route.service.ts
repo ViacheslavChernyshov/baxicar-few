@@ -20,47 +20,18 @@ export class RouteService {
 
   route: Route;
 
-  constructor(private  http: HttpClient) {
+  constructor(private http: HttpClient) {
   }
-
 
   create(route) {
-    // return this.http.post('http://localhost:8080/api/v1/driver/addDriverRoute', route, httpOptions);
-    return this.http.post('http://localhost:8080/api/v1/driver/addDriverRoute', route, { responseType: 'text' });
+    return this.http.post('http://localhost:8080/api/v1/driver/route', route, {responseType: 'text'});
   }
-
-  // create(route) {
-  //   return this.http.post('http://localhost:8080/api/v1/driver/addDriverRoute', route, httpOptions)
-  //     .pipe(map((res: Route) => {
-  //       return {
-  //         ...route,
-  //         id: res.id,
-  //         routeId: res.routeId,
-  //         date: new Date(route.date)
-  //       };
-  //     }));
-  // }
 
   getRoutesByDriverId(id) {
     return this.http.get(`http://localhost:8080/api/v1/driver/routes/${id}`);
-    // return this.http.get('http://localhost:8080/api/v1/driver/routes/' + id);
-    // return this.http.get('http://localhost:8080/api/v1/driver/routes/' + id)
-    //   .pipe(map(res => {
-    //     return Object.keys(res).map(key => ({
-    //       ...res[key],
-    //       id: key,
-    //       date: new Date()
-    //     }));
-    //   }));
+  }
 
-
-    // return this.http.get(`http://localhost:8080/api/v1/driver/routes/${id}`).pipe(map(res => {
-    //   return Object.keys(res).map(key => ({
-    //     ...res[key],
-    //     id: key,
-    //     routeId: res[key].routeId,
-    //     date: new Date()
-    //   }));
-    // }));
+  deleteRouteByRouteId(id) {
+    return this.http.delete(`http://localhost:8080/api/v1/driver/route/${id}`);
   }
 }
